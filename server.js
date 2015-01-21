@@ -12,11 +12,14 @@ app.get('/scrape', function(req, res){
 
 	request(url, function(error, response, html){
 		if(!error){
-			var $ 	 = cheerio.load(html),
-				json = JSON.stringify(fetchOGTags($), null, 4);
+			var $ = cheerio.load(html), json = {};
+
+			parseMetas($('head meta[name]'), json); 				// Regular meta tags
+			parseMetas($('head meta[property*="og:"]'), json); 		// OG tags
+			parseMetas($('head meta[property*="twitter:"]'), json); // Twitter tags
 		}
-		console.log(json);
-        res.send(json);
+		console.log('Something AWESOME happenned on your page => check it out!');
+        res.json(json);
 	})
 })
 
@@ -24,10 +27,8 @@ app.listen('1234', function(){
 	console.log('Listening on port 1234');
 });
 
-function fetchOGTags($){
-	var object = {};
-	for (var i=0, array=$('head meta[property*="og:"]'), x=array.length; i<x; i++){
-		object[array[i].attribs.property] = array[i].attribs.content;
-	}
-	return object;
-}
+function parseMetas (selector, object){
+	selector.each(function(i, el){
+		object[(el.attribs.property || el.attribs.name)] = el.attribs.content;
+	});
+};
