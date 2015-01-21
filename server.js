@@ -3,8 +3,8 @@ var request = require('request');
 var cheerio = require('cheerio');
 var app     = express();
 
-app.get('/scrape', function(req, res){
-	url = req.query.url;
+app.get('/fetch', function(req, res){
+	var url = req.query.url;
 
 	if (url === undefined) {
 		console.log('What do you want me to do exactly? Use ?url= to specify your URL.');
@@ -16,6 +16,12 @@ app.get('/scrape', function(req, res){
 
 			parseMetas($('head meta[name]'), json); 				// Regular meta tags
 			parseMetas($('head meta[property*="og:"]'), json); 		// OG tags
+			parseMetas($('head meta[property*="music:"]'), json); 	// More OG tags
+			parseMetas($('head meta[property*="video:"]'), json); 	// More OG tags
+			parseMetas($('head meta[property*="article:"]'), json); // More OG tags
+			parseMetas($('head meta[property*="book:"]'), json); 	// More OG tags
+			parseMetas($('head meta[property*="profile:"]'), json); // More OG tags
+			parseMetas($('head meta[property*="fb:"]'), json);		// Facebook app tags
 			parseMetas($('head meta[property*="twitter:"]'), json); // Twitter tags
 		}
 		console.log('Something AWESOME happenned on your page => check it out!');
@@ -29,6 +35,15 @@ app.listen('1234', function(){
 
 function parseMetas (selector, object){
 	selector.each(function(i, el){
-		object[(el.attribs.property || el.attribs.name)] = el.attribs.content;
+		var attr = el.attribs,
+			key  = attr.property || attr.name;
+		if (!object[key]){
+			object[key] = attr.content;
+		} else if (typeof(object[key]) === 'string') {
+			object[key] = [object[key]];
+			object[key].push(attr.content);
+		} else {
+			object[key].push(attr.content);
+		}
 	});
 };
