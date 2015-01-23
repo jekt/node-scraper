@@ -1,6 +1,9 @@
+'use strict';
+
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
+//var scraper = require('./lib/scraper');
 var app     = express();
 
 app.get('/fetch', function(req, res){
@@ -37,13 +40,15 @@ function parseMetas (selector, object){
 	selector.each(function(i, el){
 		var attr = el.attribs,
 			key  = attr.property || attr.name;
-		if (!object[key]){
-			object[key] = attr.content;
-		} else if (typeof(object[key]) === 'string') {
-			object[key] = [object[key]];
-			object[key].push(attr.content);
-		} else {
-			object[key].push(attr.content);
+
+		switch(typeof(object[key])){
+			case 'undefined':
+				object[key] = attr.content;
+				break;
+			case 'string':
+				object[key] = [object[key]];
+			default:
+				object[key].push(attr.content);
 		}
 	});
 };
