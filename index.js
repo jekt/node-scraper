@@ -12,18 +12,16 @@ exports.fetch = function(req, res){
 	var url = req.query.url;
 
 	if (url === undefined) {
-		return res.status(404).json({ error: 404, message: 'What do you want me to do exactly? Use ?url= to specify your URL.' });
+		return res.status(404).json({ error: 404, message: 'Error: please use ?url= to specify your URL.' });
 	}
 
 	request(url, function(error, response, html){
 		if(error){
-			return res.status(503).json({ error: 503, message: 'Error, please try later.' });
+			return res.status(404).json({ error: 404, message: 'Error: ' + url + ' doesn\'t exist' });
 		}
-		console.log('Something AWESOME happenned on your page => check it out!');
-		return res.json(parseMetas(html));
-	})
+		return res.json(parseMetas(html, req.selectors));
+	});
 };
-
 
 /**
  * Parse the meta tags in the HTML
@@ -34,8 +32,8 @@ function parseMetas (html, selectors){
 	var temp = {},
 		$ = cheerio.load(html);
 
-		selectors = selectors ?
-						selectors.map(function(sel){ $(sel) }) :
+		selectors = selectors !== {} ?
+						selectors.map(function(sel){ return $(sel) }) :
 					 	[$('head meta[name]'),					// Regular meta tags
 						 $('head meta[property*="og:"]'),		// OG tags
 						 $('head meta[property*="music:"]'),	// More OG tags
@@ -45,7 +43,7 @@ function parseMetas (html, selectors){
 						 $('head meta[property*="profile:"]'),	// More OG tags
 						 $('head meta[property*="fb:"]'),		// Facebook app tags
 						 $('head meta[property*="twitter:"]')];	// Twitter tags
-
+	console.log(selectors);
 	for (var i=0, x=selectors.length; i<x; i++){
 		if (selectors[i]) {
 			selectors[i].each(function(j, el){

@@ -1,13 +1,18 @@
 {
-  "name"         : "spider",
-  "version"      : "0.0.1",
-  "description"  : "Get the scrap out of the web",
-  "main"         : "server.js",
-  "author"       : "Jekt",
-  "repository"   : "https://github.com/jekt/spider.git",
-  "dependencies" : {
-    "express"    : "latest",
-    "request"    : "latest",
-    "cheerio"    : "latest"
-  }
+  "name": "Scraper",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+  	"cheerio": "~0.18",
+  	"express": "~4.11",
+  	"request": "~2.51"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "description": "Scraper"
 }
