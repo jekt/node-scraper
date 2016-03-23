@@ -32,7 +32,7 @@ function parseMetas (html, selectors){
 	var temp = {},
 		$ = cheerio.load(html);
 
-		selectors = selectors !== {} ?
+		selectors = selectors ?
 						selectors.map(function(sel){ return $(sel) }) :
 					 	[$('head meta[name]'),					// Regular meta tags
 						 $('head meta[property*="og:"]'),		// OG tags
@@ -43,7 +43,7 @@ function parseMetas (html, selectors){
 						 $('head meta[property*="profile:"]'),	// More OG tags
 						 $('head meta[property*="fb:"]'),		// Facebook app tags
 						 $('head meta[property*="twitter:"]')];	// Twitter tags
-	console.log(selectors);
+	//console.log(selectors);
 	for (var i=0, x=selectors.length; i<x; i++){
 		if (selectors[i]) {
 			selectors[i].each(function(j, el){

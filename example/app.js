@@ -4,7 +4,7 @@ var app     = require('express')(),
 	scraper = require('../index');
 
 app.get('/fetch', function(req, res) {
-	req.selectors = ['head meta[property*="og:"]', 'head meta[property*="twitter:"]'];
+	//req.selectors = [];
 	scraper.fetch(req, res);
 });
 
